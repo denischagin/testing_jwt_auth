@@ -30,7 +30,6 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const loginSuccess = (token: string) => {
     setIsAuth(true);
     localStorage.setItem("token", token);
-    console.log('set token')
   };
 
   const logoutSuccess = () => {
