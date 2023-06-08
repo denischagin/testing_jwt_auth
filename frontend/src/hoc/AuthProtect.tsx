@@ -7,11 +7,7 @@ interface AuthProtectProps {
 }
 
 export const AuthProtect: FC<AuthProtectProps> = ({ children }) => {
-  const { isAuth, isLoading, checkAuth } = useAuth();
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+  const { isAuth, isLoading } = useAuth();
 
   if (isLoading) return <p>Загрузка</p>;
   if (!isAuth) return <Navigate to="/login" replace />;

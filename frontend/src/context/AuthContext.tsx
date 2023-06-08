@@ -30,6 +30,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const loginSuccess = (token: string) => {
     setIsAuth(true);
     localStorage.setItem("token", token);
+    console.log('set token')
   };
 
   const logoutSuccess = () => {
@@ -50,10 +51,12 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   });
 
   const { isLoading, refetch: checkAuth } = useQuery({
+    queryKey: ['token'],
     queryFn: () => AuthService.refresh().then((res) => res.data),
     onSuccess: (data) => loginSuccess(data.accessToken),
     onError: () => setIsAuth(false),
     retry: false,
+    refetchOnWindowFocus: false
   });
 
   const authContextValue: AuthContextValue = {
