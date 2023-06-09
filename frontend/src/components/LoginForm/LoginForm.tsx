@@ -5,13 +5,14 @@ export const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
-  const { login } = useAuth();
+  const { login, isErrorLogin, errorLoginMessage } = useAuth();
 
 
   return (
     <form onSubmit={(e) => {
       e.preventDefault();
       login({email, password})
+      
     }}>
 			<input
 				type="text"
@@ -26,6 +27,7 @@ export const LoginForm = () => {
 				placeholder="Введите пароль"
       />
 			<button type="submit">Войти</button>
+      {isErrorLogin && <p>{errorLoginMessage}</p>}
     </form>
   );
 };
