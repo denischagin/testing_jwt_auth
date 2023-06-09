@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "react-query";
 import { AuthService } from "./../services/AuthService";
 import { useState } from "react";
 import { AxiosError } from "axios";
+import { AuthResponse } from "../models/response/AuthResponse";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -20,7 +21,7 @@ interface AuthContextValue {
   logout: () => void;
   checkAuth: () => Promise<any>;
   isErrorLogin: boolean,
-  errorLoginMessage: string
+  errorLoginMessage: string | null
 }
 
 const AuthContext = createContext<AuthContextValue>({} as AuthContextValue);
@@ -40,15 +41,15 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     setIsAuth(false);
   };
 
-  const { mutate: login, isError, error } = useMutation({
+  const { mutate: login, isError, error } = useMutation<AuthResponse, AxiosError<{message: string}>, Credentials, unknown>({
     mutationFn: ({ email, password }: Credentials) =>
       AuthService.login(email, password).then((res) => res.data),
     onSuccess: (data) => loginSuccess(data.accessToken),
   });
 
-  const errorLogin = error as AxiosError
-  const  errorLoginData = errorLogin?.response?.data as {message: string}
-  const errorLoginMessage = errorLoginData?.message
+  const errorLogin = error
+  const errorLoginData = errorLogin?.response?.data as {message: string}
+  const errorLoginMessage = errorLoginData?.message ?? null
   const isErrorLogin = isError && errorLogin?.response?.status === 400 ? true : false
 
   const { mutate: logout } = useMutation({

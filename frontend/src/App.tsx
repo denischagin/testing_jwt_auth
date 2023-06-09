@@ -6,10 +6,12 @@ import { RegistrationPage } from "./pages/RegistrationPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { AuthProvider } from "./context/AuthContext";
 import { getProtected } from './helper/getProtected';
+import { CssBaseline } from "@mui/material";
 
 const App = () => {
   return (
     <div>
+      <CssBaseline />
       <AuthProvider>
         <BrowserRouter>
           <Routes>
