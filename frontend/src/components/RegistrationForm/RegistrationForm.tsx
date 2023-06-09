@@ -1,4 +1,3 @@
-import { FormEvent, useState } from "react";
 import {
   Box,
   Button,
@@ -9,16 +8,41 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useForm } from "react-hook-form";
+
+type FormValues = {
+  email: string;
+  password: string;
+  repeatPassword: string;
+};
 
 export const RegistrationForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-  const { register, isErrorRegister, errorRegisterMessage, isLoading } =
-    useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, touchedFields },
+    getValues,
+  } = useForm<FormValues>({
+    mode: "onBlur",
+  });
+
+  const {
+    register: regMutation,
+    isErrorRegister,
+    errorRegisterMessage,
+    isLoading,
+  } = useAuth();
+
+
+  const onSubmit = (data: FormValues) => {
+    regMutation(data);
+  };
 
   if (isLoading) return <LinearProgress sx={{ width: "100%" }} />;
 
+  console.log(errors?.repeatPassword);
   return (
     <Box
       sx={{
@@ -40,44 +64,92 @@ export const RegistrationForm = () => {
             display: "flex",
             flexDirection: "column",
           }}
-          onSubmit={(e: FormEvent) => {
-            e.preventDefault();
-            register({ email, password });
-          }}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <TextField
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             label="Почта"
+            type="text"
+            {...register("email", {
+              required: "Поле обязательно к заполнению",
+              pattern: emailRegex,
+            })}
           />
+          {errors?.email ? (
+            <Typography color="error" variant="body1">
+              {errors?.email.message || "Неправильный ввод почты"}
+            </Typography>
+          ) : (
+            touchedFields.email && (
+              <Typography color="green" variant="body1">
+                Почта указана верно
+              </Typography>
+            )
+          )}
 
           <TextField
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             label="Пароль"
+            type="password"
+            {...register("password", {
+              required: "Поле обязательно к заполнению",
+              minLength: {
+                value: 3,
+                message: "Минимальная длина: 3",
+              },
+            })}
           />
+          {errors?.password ? (
+            <Typography color="error" variant="body1">
+              {errors?.password?.message}
+            </Typography>
+          ) : (
+            touchedFields.password && (
+              <Typography color="green" variant="body1">
+                Пароль указан верно
+              </Typography>
+            )
+          )}
 
-          <Button variant="contained" type="submit">
+          <TextField
+            label="Повторите пароль"
+            type="password"
+            {...register("repeatPassword", {
+              validate: (value, formValues) =>
+                value === formValues.password && value.length > 0,
+            })}
+          />
+          {errors?.repeatPassword ? (
+            <Typography color="error" variant="body1">
+              Пароли не равны
+            </Typography>
+          ) : (
+            touchedFields.repeatPassword && (
+              <Typography color="green" variant="body1">
+                Пароли равны
+              </Typography>
+            )
+          )}
+
+          <Button variant="contained" type="submit" disabled={!isValid}>
             Зарегистрироваться
           </Button>
 
-          <Box display="flex" gap="10px">
+          <Box display="flex" gap="10px"> 
             <Typography variant="body2" sx={{ flexGrow: 1 }}>
               Уже есть аккаунт?&nbsp;
               <Link to="/login">Войти</Link>
             </Typography>
 
-            {isErrorRegister && (
-              <Typography
-                variant="body1"
-                color="rgb(255, 0, 0)"
-                sx={{ maxWidth: "300px" }}
-              >
-                {errorRegisterMessage}
-              </Typography>
-            )}
+            {isErrorRegister &&
+              getValues().email.length !== 0 &&
+              getValues().password.length !== 0 && (
+                <Typography
+                  variant="body1"
+                  color="rgb(255, 0, 0)"
+                  sx={{ maxWidth: "300px" }}
+                >
+                  {errorRegisterMessage}
+                </Typography>
+              )}
           </Box>
         </Box>
       </Container>
