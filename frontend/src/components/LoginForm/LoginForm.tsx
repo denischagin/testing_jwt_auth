@@ -31,7 +31,7 @@ export const LoginForm = () => {
           }}
         >
           <TextField
-            type="text"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             label="Почта"
@@ -44,9 +44,9 @@ export const LoginForm = () => {
           />
           <Button variant="outlined" type="submit">Войти</Button>
           <Box display="flex" justifyContent="space-between">
-            <Typography variant="body1">
+            <Typography variant="body2">
               Нет аккаунта?&nbsp;
-              <Link to="/registration">Зарегистрироваться </Link>
+              <Link to="/registration">Зарегистрироваться</Link>
             </Typography>
             {isErrorLogin && <Typography variant="body1" color="rgb(255, 0, 0)">{errorLoginMessage}</Typography>}
           </Box>
