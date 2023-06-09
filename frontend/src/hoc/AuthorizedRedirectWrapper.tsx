@@ -9,7 +9,6 @@ interface AuthorizedRedirectWrapperProps {
 export const AuthorizedRedirectWrapper: FC<AuthorizedRedirectWrapperProps> = ({children}) => {
   const {isAuth} = useAuth()
 	if (isAuth) return <Navigate to="/profile" replace/>
-  return (
-    <div>{children}</div>
-  )
+  return children
+  
 }
