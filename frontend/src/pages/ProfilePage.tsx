@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "react-query";
+import { useAuth } from "../hooks/useAuth";
 import { UserService } from "../services/UserService";
-import { useAuth } from "./../context/AuthContext";
 
 export const ProfilePage = () => {
   const { logout } = useAuth();

@@ -1,13 +1,23 @@
 import { FormEvent, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  LinearProgress,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
-export const LoginForm = () => {
-  const [password, setPassword] = useState("");
+export const RegistrationForm = () => {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const { login, isErrorLogin, errorLoginMessage } = useAuth();
+  const { register, isErrorRegister, errorRegisterMessage, isLoading } =
+    useAuth();
+
+  if (isLoading) return <LinearProgress sx={{ width: "100%" }} />;
 
   return (
     <Box
@@ -20,7 +30,7 @@ export const LoginForm = () => {
     >
       <Container maxWidth="sm">
         <Typography variant="h4" align="center" mb={2}>
-          Войдите в аккаунт:
+          Создайте аккаунт:
         </Typography>
 
         <Box
@@ -32,7 +42,7 @@ export const LoginForm = () => {
           }}
           onSubmit={(e: FormEvent) => {
             e.preventDefault();
-            login({ email, password });
+            register({ email, password });
           }}
         >
           <TextField
@@ -50,18 +60,22 @@ export const LoginForm = () => {
           />
 
           <Button variant="contained" type="submit">
-            Войти
+            Зарегистрироваться
           </Button>
 
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="body2">
-              Нет аккаунта?&nbsp;
-              <Link to="/registration">Зарегистрироваться</Link>
+          <Box display="flex" gap="10px">
+            <Typography variant="body2" sx={{ flexGrow: 1 }}>
+              Уже есть аккаунт?&nbsp;
+              <Link to="/login">Войти</Link>
             </Typography>
 
-            {isErrorLogin && (
-              <Typography variant="body1" color="rgb(255, 0, 0)">
-                {errorLoginMessage}
+            {isErrorRegister && (
+              <Typography
+                variant="body1"
+                color="rgb(255, 0, 0)"
+                sx={{ maxWidth: "300px" }}
+              >
+                {errorRegisterMessage}
               </Typography>
             )}
           </Box>
