@@ -1,18 +1,21 @@
 import { useAuth } from "../../hooks/useAuth";
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { EmailInput } from "../EmailInput/EmailInput";
+import { PasswordInput } from "../PasswordInput/PasswordInput";
 
 type FormValues = {
   email: string;
   password: string;
+  repeatPassword?: string
 };
 
 export const LoginForm = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors, isValid },
+    formState: { errors, isValid, touchedFields },
     getValues,
   } = useForm<FormValues>({
     mode: "onBlur",
@@ -46,31 +49,18 @@ export const LoginForm = () => {
           }}
           onSubmit={handleSubmit(onSubmit)}
         >
-          <TextField
-            type="email"
-            label="Почта"
-            {...register("email", {
-              required: "Поле обязательно к заполнению",
-            })}
+          <EmailInput 
+            errors={errors}
+            register={register}
+            touchedFields={touchedFields}
           />
-          {errors?.email && (
-            <Typography color="error" variant="body1">
-              {errors?.email.message}
-            </Typography>
-          )}
 
-          <TextField
-            type="password"
-            label="Пароль"
-            {...register("password", {
-              required: "Поле обязательно к заполнению",
-            })}
+          <PasswordInput 
+            errors={errors}
+            register={register}
+            touchedFields={touchedFields}
+            minLength={0}
           />
-          {errors?.password && (
-            <Typography color="error" variant="body1">
-              {errors?.password.message}
-            </Typography>
-          )}
 
           <Button variant="contained" type="submit" disabled={!isValid}>
             Войти
@@ -82,13 +72,11 @@ export const LoginForm = () => {
               <Link to="/registration">Зарегистрироваться</Link>
             </Typography>
 
-            {isErrorLogin &&
-              getValues().email.length !== 0 &&
-              getValues().password.length !== 0 && (
-                <Typography variant="body1" color="rgb(255, 0, 0)">
-                  {errorLoginMessage}
-                </Typography>
-              )}
+            {isErrorLogin && getValues().email && getValues().password && (
+              <Typography variant="body1" color="rgb(255, 0, 0)">
+                {errorLoginMessage}
+              </Typography>
+            )}
           </Box>
         </Box>
       </Container>
